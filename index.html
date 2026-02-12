@@ -1,1 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fdf2f8 50%, #fce7f3 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: #d63384;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 8px rgba(214, 51, 132, 0.3);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            color: #ec4899;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .message {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+            color: #6b21a8;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .option {
+            background: linear-gradient(145deg, #fff0f6, #fce7f3);
+            border: 2px solid #f9a8d4;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #be185d;
+            box-shadow: 0 10px 30px rgba(250, 204, 221, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(250, 204, 221, 0.6);
+            background: linear-gradient(145deg, #fce7f3, #fff0f6);
+        }
+
+        .cta {
+            background: linear-gradient(145deg, #ec4899, #db2777);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(236, 72, 153, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(236, 72, 153, 0.6);
+        }
+
+        /* Photos Grid */
+        .photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .photo {
+            width: 100%;
+            height: 250px;
+            background: #f3e8ff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a855f7;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+            border: 3px solid #f0abfc;
+            opacity: 0.7;
+            transition: opacity 0.6s ease;
+        }
+
+        .photo.active {
+            opacity: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Envelope */
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 2rem 0;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #f472b6, #ec4899);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(244, 114, 182, 0.4);
+        }
+
+        .envelope-front {
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            bottom: 100px;
+            background: linear-gradient(145deg, #f472b6, #ec4899);
+            border-radius: 15px 15px 0 0;
+            transform-origin: bottom;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+            box-shadow: 0 10px 20px rgba(244, 114, 182, 0.3);
+        }
+
+        .envelope.open .envelope-front {
+            transform: rotateX(-180deg);
+        }
+
+        .envelope-content {
+            position: absolute;
+            top: 110px;
+            left: 30px;
+            right: 30px;
+            bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .envelope.open .envelope-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .audio-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        audio {
+            width: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            .photos {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-container">
+        <!-- Replace 'dooron-dooron.mp3' with your uploaded song file on GitHub -->
+        <audio id="bgMusic" src="dooron-dooron.mp3" autoplay loop>
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <section id="question">
+        <h1>Will you be my valentine?</h1>
+        <div class="options">
+            <div class="option" data-choice="A">Option A. Yes</div>
+            <div class="option" data-choice="B">Option B. A</div>
+            <div class="option" data-choice="C">Option C. B</div>
+            <div class="option" data-choice="D">Option D. C</div>
+        </div>
+    </section>
+
+    <section id="response" style="display: none;">
+        <div class="message">
+            Yes means everything to me! You've made my heart the happiest today. I can't wait to create countless memories with you, my love. You're my forever valentine.[web:13][web:17]
+        </div>
+        <button class="cta" onclick="showMemories()">Next Chapter</button>
+    </section>
+
+    <section id="memories" style="display: none;">
+        <h2>Our Memories</h2>
+        <div class="photos">
+            <!-- Replace src="image1.jpg" etc. with your 10 GitHub-hosted image paths -->
+            <div class="photo" data-img="1">
+                <!-- Photo 1 -->
+                <img src="image1.jpg" alt="Memory 1" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="2">
+                <img src="image2.jpg" alt="Memory 2" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="3">
+                <img src="image3.jpg" alt="Memory 3" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="4">
+                <img src="image4.jpg" alt="Memory 4" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="5">
+                <img src="image5.jpg" alt="Memory 5" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="6">
+                <img src="image6.jpg" alt="Memory 6" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="7">
+                <img src="image7.jpg" alt="Memory 7" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="8">
+                <img src="image8.jpg" alt="Memory 8" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="9">
+                <img src="image9.jpg" alt="Memory 9" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+            <div class="photo" data-img="10">
+                <img src="image10.jpg" alt="Memory 10" style="width:100%; height:100%; object-fit:cover; border-radius:17px;">
+            </div>
+        </div>
+        <button class="cta" onclick="openEnvelope()" style="margin-top: 3rem;">Final Chapter</button>
+    </section>
+
+    <section id="final" style="display: none;">
+        <h1>Happy Valentine's Day!</h1>
+        <div class="envelope" id="envelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-content">
+                <h2 style="color: #ec4899; margin-bottom: 1rem;">My Dearest Love,</h2>
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #6b21a8;">
+                    Every moment with you feels like a dream. You light up my world in ways I never imagined. Here's to us, our adventures, and endless love ahead.
+                </p>
+                <p style="font-style: italic; color: #be185d; margin-top: 1rem;">
+                    Forever yours.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Page load animation
+        window.addEventListener('load', () => {
+            document.getElementById('question').classList.add('active');
+            // Autoplay music - may need user interaction on some browsers
+            const music = document.getElementById('bgMusic');
+            music.play().catch(e => console.log('Autoplay prevented'));
+        });
+
+        // Option selection
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.getElementById('question').style.display = 'none';
+                document.getElementById('response').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('response').classList.add('active');
+                }, 100);
+            });
+        });
+
+        function showMemories() {
+            document.getElementById('response').style.display = 'none';
+            document.getElementById('memories').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('memories').classList.add('active');
+                // Animate photos
+                document.querySelectorAll('.photo').forEach((photo, index) => {
+                    setTimeout(() => photo.classList.add('active'), index * 200);
+                });
+            }, 100);
+        }
+
+        function openEnvelope() {
+            document.getElementById('memories').style.display = 'none';
+            document.getElementById('final').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('final').classList.add('active');
+                document.getElementById('envelope').classList.add('open');
+            }, 100);
+        }
+
+        // Smooth scroll prevention
+        window.addEventListener('scroll', () => {
+            window.scrollTo(0, 0);
+        }, { passive: false });
+    </script>
+</body>
+</html>
 
