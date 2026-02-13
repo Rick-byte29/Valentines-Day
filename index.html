@@ -20,6 +20,72 @@
             overflow-x: hidden;
         }
 
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #fff0f6 0%, #fce7f3 50%, #f3e8ff 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease 9s, transform 1s ease 9s;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .loader-heart {
+            font-size: clamp(4rem, 15vw, 8rem);
+            animation: heartbeat 1.5s ease-in-out infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .loader-text {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            color: #ec4899;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+        }
+
+        .loader-subtext {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: #be185d;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: clamp(200px, 40vw, 400px);
+            height: 8px;
+            background: rgba(250, 204, 221, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ec4899, #f472b6);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.2s ease;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+        }
+
         /* Smooth transitions */
         * {
             transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -323,9 +389,19 @@
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-heart">💖</div>
+        <div class="loader-text">Loading Love...</div>
+        <div class="loader-subtext">Just a moment for something special 💕</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
     <div class="audio-container">
         <!-- Replace 'dooron-dooron.mp3' with your uploaded song file on GitHub -->
-        <audio id="bgMusic" src="dooron-dooron.mp3" autoplay loop>
+        <audio id="bgMusic" src="dooron-dooron.mp3" preload="auto">
             Your browser does not support the audio element.
         </audio>
     </div>
@@ -333,7 +409,7 @@
     <!-- Heart Rain Container -->
     <div id="hearts"></div>
 
-    <section id="question">
+    <section id="question" style="display: none;">
         <h1>Will you be my valentine?</h1>
         <div class="options">
             <div class="option" data-choice="A">Option A. Yes</div>
@@ -413,12 +489,76 @@
     </section>
 
     <script>
-        // Page load animation
-        window.addEventListener('load', () => {
-            document.getElementById('question').classList.add('active');
-            const music = document.getElementById('bgMusic');
-            music.play().catch(e => console.log('Autoplay prevented'));
-        });
+        // 10-second loading sequence
+        let progress = 0;
+        const progressBar = document.getElementById('progress');
+        
+        const progressInterval = setInterval(() => {
+            progress += 1;
+            progressBar.style.width = progress + '%';
+            
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+            }
+        }, 100);
+
+        setTimeout(() => {
+            // Hide loader after 10s
+            document.getElementById('loader').classList.add('hidden');
+            
+            setTimeout(() => {
+                // Show first section
+                const questionSection = document.getElementById('question');
+                questionSection.style.display = 'flex';
+                questionSection.classList.add('active');
+                
+                // Start intro heart rain
+                createIntroHeartRain();
+                
+                // Play music
+                const music = document.getElementById('bgMusic');
+                music.play().catch(e => console.log('Autoplay prevented'));
+                
+            }, 1000);
+        }, 10000);
+
+        // Intro heart rain (shorter, celebratory)
+        function createIntroHeartRain() {
+            const heartsContainer = document.getElementById('hearts');
+            const heartTypes = ['💖', '💕', '💗', '✨', '🌸'];
+            
+            let introHearts = 0;
+            const maxIntroHearts = 20;
+            
+            function createIntroHeart() {
+                if (introHearts >= maxIntroHearts) return;
+                
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                heart.style.fontSize = (Math.random() * 8 + 10) + 'px';
+                heart.style.opacity = 0.8;
+                
+                heartsContainer.appendChild(heart);
+                introHearts++;
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 3500);
+            }
+
+            const introInterval = setInterval(() => {
+                createIntroHeart();
+                if (introHearts >= maxIntroHearts) {
+                    clearInterval(introInterval);
+                    setTimeout(() => {
+                        document.querySelectorAll('.heart').forEach(heart => heart.remove());
+                    }, 2000);
+                }
+            }, 300);
+        }
 
         // Option selection
         document.querySelectorAll('.option').forEach(opt => {
@@ -458,14 +598,10 @@
             if (heartsActive) return;
             heartsActive = true;
             
-            // Open envelope
             const envelope = document.getElementById('envelope');
             envelope.classList.add('open');
             
-            // Add hearts rain
             createHeartRain();
-            
-            // Activate final message and hearts
             document.body.classList.add('hearts-active');
         }
 
@@ -490,10 +626,7 @@
                 }, 7000);
             }
 
-            // Create continuous hearts
             const heartInterval = setInterval(createHeart, 200);
-            
-            // Stop after 10 seconds
             setTimeout(() => {
                 clearInterval(heartInterval);
                 setTimeout(() => {
