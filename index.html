@@ -130,8 +130,24 @@
             max-width: 800px;
             line-height: 1.6;
             color: #6b21a8;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             padding: 0 1rem;
+        }
+
+        .response-image {
+            width: 250px;
+            height: 250px;
+            border-radius: 20px;
+            border: 4px solid #f9a8d4;
+            box-shadow: 0 15px 35px rgba(249, 168, 212, 0.4);
+            margin: 2rem 0;
+            background: linear-gradient(145deg, #fff0f6, #fce7f3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #be185d;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
         .options {
@@ -203,28 +219,64 @@
         .photo {
             aspect-ratio: 1;
             border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
-            border: 3px solid #f0abfc;
-            opacity: 0.7;
-            transition: all 0.6s ease;
             overflow: hidden;
             cursor: pointer;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+            border: 3px solid #f0abfc;
+            transition: all 0.6s ease;
+            position: relative;
         }
 
         .photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 17px;
             display: block;
+            transition: all 0.5s ease;
+        }
+
+        .photo-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, rgba(255, 240, 246, 0.95), rgba(252, 231, 243, 0.95));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .photo-heart {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .photo-text {
+            font-size: 0.9rem;
+            color: #be185d;
+            font-weight: 600;
+            line-height: 1.4;
         }
 
         .photo.active {
             opacity: 1;
             animation: float 3s ease-in-out infinite;
+        }
+
+        .photo.clicked .photo-content {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .photo.clicked img {
+            opacity: 0;
         }
 
         @keyframes float {
@@ -379,6 +431,10 @@
             .envelope-content {
                 padding: 1rem;
             }
+            .response-image {
+                width: 200px;
+                height: 200px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -419,9 +475,13 @@
         </div>
     </section>
 
-    <section id="response" style="display: none;">
+    <section id="response" style="display:  none;">
         <div class="message">
             Yes means everything to me! You've made my heart the happiest today. I can't wait to create countless memories with you, my love. You're my forever valentine.
+        </div>
+        <!-- Replace src="response-image.jpg" with your special image -->
+        <div class="response-image">
+            <img src="response-image.jpg" alt="Special Moment" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">
         </div>
         <button class="cta" onclick="showMemories()">Next Chapter</button>
     </section>
@@ -433,33 +493,73 @@
                 <!-- Replace src with your 10 GitHub-hosted image paths -->
                 <div class="photo" data-img="1">
                     <img src="image1.jpg" alt="Memory 1">
+                    <div class="photo-content">
+                        <div class="photo-heart">💖</div>
+                        <div class="photo-text">That day we first met<br>my heart skipped a beat!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="2">
                     <img src="image2.jpg" alt="Memory 2">
+                    <div class="photo-content">
+                        <div class="photo-heart">💕</div>
+                        <div class="photo-text">Your smile lights my world<br>you're my favorite girl!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="3">
                     <img src="image3.jpg" alt="Memory 3">
+                    <div class="photo-content">
+                        <div class="photo-heart">💗</div>
+                        <div class="photo-text">Every moment with you<br>feels like a dream come true!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="4">
                     <img src="image4.jpg" alt="Memory 4">
+                    <div class="photo-content">
+                        <div class="photo-heart">💝</div>
+                        <div class="photo-text">Holding your hand so tight<br>everything feels just right!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="5">
                     <img src="image5.jpg" alt="Memory 5">
+                    <div class="photo-content">
+                        <div class="photo-heart">❤️</div>
+                        <div class="photo-text">Your laugh is my song<br>with you I belong!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="6">
                     <img src="image6.jpg" alt="Memory 6">
+                    <div class="photo-content">
+                        <div class="photo-heart">💖</div>
+                        <div class="photo-text">Late night talks with you<br>make all my dreams come true!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="7">
                     <img src="image7.jpg" alt="Memory 7">
+                    <div class="photo-content">
+                        <div class="photo-heart">💕</div>
+                        <div class="photo-text">You're my safe place<br>my forever embrace!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="8">
                     <img src="image8.jpg" alt="Memory 8">
+                    <div class="photo-content">
+                        <div class="photo-heart">💗</div>
+                        <div class="photo-text">Every adventure with you<br>is a memory so true!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="9">
                     <img src="image9.jpg" alt="Memory 9">
+                    <div class="photo-content">
+                        <div class="photo-heart">💝</div>
+                        <div class="photo-text">You make my heart dance<br>give me one more chance!</div>
+                    </div>
                 </div>
                 <div class="photo" data-img="10">
                     <img src="image10.jpg" alt="Memory 10">
+                    <div class="photo-content">
+                        <div class="photo-heart">❤️</div>
+                        <div class="photo-text">Forever starts today<br>with you I'll always stay!</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -503,26 +603,22 @@
         }, 100);
 
         setTimeout(() => {
-            // Hide loader after 10s
             document.getElementById('loader').classList.add('hidden');
             
             setTimeout(() => {
-                // Show first section
                 const questionSection = document.getElementById('question');
                 questionSection.style.display = 'flex';
                 questionSection.classList.add('active');
                 
-                // Start intro heart rain
                 createIntroHeartRain();
                 
-                // Play music
                 const music = document.getElementById('bgMusic');
                 music.play().catch(e => console.log('Autoplay prevented'));
                 
             }, 1000);
         }, 10000);
 
-        // Intro heart rain (shorter, celebratory)
+        // Intro heart rain
         function createIntroHeartRain() {
             const heartsContainer = document.getElementById('hearts');
             const heartTypes = ['💖', '💕', '💗', '✨', '🌸'];
@@ -572,13 +668,20 @@
             });
         });
 
+        // Photo click functionality
+        document.querySelectorAll('.photo').forEach(photo => {
+            photo.addEventListener('click', function() {
+                this.classList.add('clicked', 'active');
+            });
+        });
+
         function showMemories() {
             document.getElementById('response').style.display = 'none';
             document.getElementById('memories').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('memories').scrollIntoView({ behavior: 'smooth' });
                 document.getElementById('memories').classList.add('active');
-                document.querySelectorAll('.photo').forEach((photo, index) => {
+                document.querySelectorAll('.photo:not(.clicked)').forEach((photo, index) => {
                     setTimeout(() => photo.classList.add('active'), index * 150);
                 });
             }, 300);
@@ -646,16 +749,6 @@
             if (!heartsActive) {
                 document.getElementById('envelope').classList.remove('hovered');
             }
-        });
-
-        // Photo hover effects
-        document.querySelectorAll('.photo').forEach(photo => {
-            photo.addEventListener('mouseenter', () => {
-                photo.style.transform = 'scale(1.05)';
-            });
-            photo.addEventListener('mouseleave', () => {
-                photo.style.transform = 'scale(1)';
-            });
         });
     </script>
 </body>
