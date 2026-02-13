@@ -34,17 +34,11 @@
             align-items: center;
             opacity: 0;
             transform: translateY(50px);
-            scroll-snap-align: start;
         }
 
         section.active {
             opacity: 1;
             transform: translateY(0);
-        }
-
-        html {
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
         }
 
         h1 {
@@ -142,19 +136,16 @@
 
         .photo {
             aspect-ratio: 1;
-            background: #f3e8ff;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #a855f7;
-            font-size: 1rem;
-            font-weight: 600;
             box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
             border: 3px solid #f0abfc;
             opacity: 0.7;
             transition: all 0.6s ease;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .photo img {
@@ -175,12 +166,21 @@
             50% { transform: translateY(-15px); }
         }
 
-        /* Envelope */
+        /* Envelope - Clickable */
+        .envelope-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
         .envelope {
             position: relative;
-            width: 320px;
-            height: 220px;
+            width: clamp(250px, 40vw, 350px);
+            height: clamp(160px, 25vw, 220px);
             margin: 2rem 0;
+            cursor: pointer;
         }
 
         .envelope-back {
@@ -195,15 +195,19 @@
         .envelope-front {
             position: absolute;
             top: 0;
-            left: 20px;
-            right: 20px;
-            bottom: 110px;
+            left: 5%;
+            right: 5%;
+            bottom: clamp(40px, 8vw, 100px);
             background: linear-gradient(145deg, #f472b6, #ec4899);
             border-radius: 15px 15px 0 0;
             transform-origin: bottom;
-            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            clip-path: polygon(0 0, 100% 0, 100% 65%, 50% 95%, 0 65%);
             box-shadow: 0 10px 20px rgba(244, 114, 182, 0.3);
+        }
+
+        .envelope.hovered .envelope-front {
+            transform: rotateX(-10deg);
         }
 
         .envelope.open .envelope-front {
@@ -212,22 +216,73 @@
 
         .envelope-content {
             position: absolute;
-            top: 120px;
-            left: 30px;
-            right: 30px;
-            bottom: 20px;
+            top: clamp(60px, 12vw, 120px);
+            left: 8%;
+            right: 8%;
+            bottom: 10px;
             background: white;
             border-radius: 10px;
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.5s ease;
+            transition: all 0.8s ease;
+            max-height: clamp(100px, 18vw, 140px);
+            overflow: hidden;
         }
 
         .envelope.open .envelope-content {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .envelope-label {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: #ec4899;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Heart Rain */
+        #hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: clamp(12px, 2vw, 20px);
+            color: #ec4899;
+            animation: fall linear infinite;
+            transform: rotate(45deg);
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(405deg);
+            }
+        }
+
+        /* Final Message */
+        .final-message {
+            max-width: 600px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease 0.5s;
+        }
+
+        .hearts-active .final-message,
+        .hearts-active #hearts {
+            opacity: 1;
         }
 
         .audio-container {
@@ -255,6 +310,9 @@
             section {
                 padding: 2rem 1rem;
             }
+            .envelope-content {
+                padding: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -271,6 +329,9 @@
             Your browser does not support the audio element.
         </audio>
     </div>
+
+    <!-- Heart Rain Container -->
+    <div id="hearts"></div>
 
     <section id="question">
         <h1>Will you be my valentine?</h1>
@@ -326,23 +387,28 @@
                 </div>
             </div>
         </div>
-        <button class="cta" onclick="openEnvelope()">Final Chapter</button>
+        <button class="cta" onclick="showFinal()">Final Chapter</button>
     </section>
 
     <section id="final" style="display: none;">
         <h1>Happy Valentine's Day!</h1>
-        <div class="envelope" id="envelope">
-            <div class="envelope-back"></div>
-            <div class="envelope-front"></div>
-            <div class="envelope-content">
-                <h2 style="color: #ec4899; margin-bottom: 1rem;">My Dearest Love,</h2>
-                <p style="font-size: 1.1rem; line-height: 1.6; color: #6b21a8;">
-                    Every moment with you feels like a dream. You light up my world in ways I never imagined. Here's to us, our adventures, and endless love ahead.
-                </p>
-                <p style="font-style: italic; color: #be185d; margin-top: 1rem;">
-                    Forever yours.
-                </p>
+        <div class="envelope-container" onclick="openHearts()" id="envelopeContainer">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-front"></div>
+                <div class="envelope-content">
+                    <h3 style="color: #ec4899; margin-bottom: 0.5rem; font-size: clamp(1.1rem, 4vw, 1.4rem);">Click to Open!</h3>
+                    <p style="font-size: clamp(0.9rem, 3vw, 1.1rem); color: #6b21a8;">💕 Surprise Inside 💕</p>
+                </div>
             </div>
+            <div class="envelope-label">Click the envelope above!</div>
+        </div>
+        <div class="final-message">
+            <h2 style="color: #ec4899; margin-bottom: 1.5rem;">My Forever Love,</h2>
+            <p style="font-size: clamp(1.2rem, 3.5vw, 1.6rem); line-height: 1.7; color: #6b21a8;">
+                You are my sunshine, my heartbeat, my everything. Every laugh, every moment, every dream is better because it's with you. 
+                Happy Valentine's Day to the love of my life. Here's to infinite tomorrows together. 💖
+            </p>
         </div>
     </section>
 
@@ -372,24 +438,92 @@
             setTimeout(() => {
                 document.getElementById('memories').scrollIntoView({ behavior: 'smooth' });
                 document.getElementById('memories').classList.add('active');
-                // Animate photos sequentially
                 document.querySelectorAll('.photo').forEach((photo, index) => {
                     setTimeout(() => photo.classList.add('active'), index * 150);
                 });
             }, 300);
         }
 
-        function openEnvelope() {
+        function showFinal() {
             document.getElementById('memories').style.display = 'none';
             document.getElementById('final').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('final').scrollIntoView({ behavior: 'smooth' });
                 document.getElementById('final').classList.add('active');
-                setTimeout(() => {
-                    document.getElementById('envelope').classList.add('open');
-                }, 500);
             }, 300);
         }
+
+        let heartsActive = false;
+        function openHearts() {
+            if (heartsActive) return;
+            heartsActive = true;
+            
+            // Open envelope
+            const envelope = document.getElementById('envelope');
+            envelope.classList.add('open');
+            
+            // Add hearts rain
+            createHeartRain();
+            
+            // Activate final message and hearts
+            document.body.classList.add('hearts-active');
+        }
+
+        function createHeartRain() {
+            const heartsContainer = document.getElementById('hearts');
+            const heartTypes = ['💖', '💕', '💗', '💝', '❤️', '💘'];
+            
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.opacity = Math.random() * 0.5 + 0.3;
+                heart.style.fontSize = (Math.random() * 10 + 12) + 'px';
+                
+                heartsContainer.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 7000);
+            }
+
+            // Create continuous hearts
+            const heartInterval = setInterval(createHeart, 200);
+            
+            // Stop after 10 seconds
+            setTimeout(() => {
+                clearInterval(heartInterval);
+                setTimeout(() => {
+                    document.querySelectorAll('.heart').forEach(heart => heart.remove());
+                }, 2000);
+            }, 10000);
+        }
+
+        // Envelope hover effect
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        envelopeContainer.addEventListener('mouseenter', () => {
+            if (!heartsActive) {
+                document.getElementById('envelope').classList.add('hovered');
+            }
+        });
+        envelopeContainer.addEventListener('mouseleave', () => {
+            if (!heartsActive) {
+                document.getElementById('envelope').classList.remove('hovered');
+            }
+        });
+
+        // Photo hover effects
+        document.querySelectorAll('.photo').forEach(photo => {
+            photo.addEventListener('mouseenter', () => {
+                photo.style.transform = 'scale(1.05)';
+            });
+            photo.addEventListener('mouseleave', () => {
+                photo.style.transform = 'scale(1)';
+            });
+        });
     </script>
 </body>
 </html>
