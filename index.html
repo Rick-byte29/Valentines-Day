@@ -455,12 +455,17 @@
         </div>
     </div>
 
-    <div class="audio-container">
-        <!-- Replace 'dooron-dooron.mp3' with your uploaded song file on GitHub -->
-        <audio id="bgMusic" src="https://drive.google.com/file/d/1PHUBlUEDtsNqHrH1PQM5fQWNy33cjY1W/view?usp=drive_link" preload="auto">
-            Your browser does not support the audio element.
-        </audio>
-    </div>
+   <div class="audio-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <audio id="bgMusic" 
+           src="https://docs.google.com/uc?export=download&id=1PHUBlUEDtsNqHrH1PQM5fQWNy33cjY1W" 
+           preload="auto" 
+           loop 
+           controls 
+           muted 
+           style="width: 280px; height: 60px; border-radius: 30px; background: linear-gradient(145deg, #fff0f6, #fce7f3); border: 3px solid #f9a8d4; box-shadow: 0 15px 35px rgba(249, 168, 212, 0.4);">
+        Your browser does not support the audio element.
+    </audio>
+</div>
 
     <!-- Heart Rain Container -->
     <div id="hearts"></div>
